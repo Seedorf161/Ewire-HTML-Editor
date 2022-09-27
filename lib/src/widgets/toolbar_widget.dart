@@ -363,7 +363,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                     SliverFillRemaining(
                       hasScrollBody: false,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: _buildChildren(),
                       ),
                     ),

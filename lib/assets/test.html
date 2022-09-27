@@ -1,0 +1,291 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="Flutter Summernote HTML Editor">
+    <meta name="author" content="tneotia">
+    <title>Summernote Text Editor HTML</title>
+    <script src="jquery.min.js"></script>
+    <!--summernote js and css-->
+    <link href="summernote-lite.min.css" rel="stylesheet">
+    <script src="summernote-lite.min.js"></script>
+    <link href="summernote-lite-dark.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="summernote-2"></div>
+
+    <script type="text/javascript">
+            $(document).ready(function () {
+              $('#summernote-2').summernote({
+                placeholder: "Your text here...",
+                tabsize: 2,
+                height: 300,
+                disableGrammar: false,
+                spellCheck: false,
+                maximumFileSize: 10485760,
+                
+                callbacks: {
+            onKeydown: function(e) {
+                var chars = $(".note-editable").text();
+                var totalChars = chars.length;
+                
+                window.parent.postMessage(JSON.stringify({"view": "Xg3WhdU0wanymQ==", "type": "toDart: characterCount", "totalChars": totalChars}), "*");
+            },
+        }
+              });
+              
+              $('#summernote-2').on('summernote.change', function(_, contents, $editable) {
+                window.parent.postMessage(JSON.stringify({"view": "Xg3WhdU0wanymQ==", "type": "toDart: onChangeContent", "contents": contents}), "*");
+              });
+            });
+           
+            window.parent.addEventListener('message', handleMessage, false);
+            document.onselectionchange = onSelectionChange;
+            console.log('done');
+          
+            function handleMessage(e) {
+              if (e && e.data && e.data.includes("toIframe:")) {
+                var data = JSON.parse(e.data);
+                if (data["view"].includes("Xg3WhdU0wanymQ==")) {
+                  if (data["type"].includes("getText")) {
+                    var str = $('#summernote-2').summernote('code');
+                    window.parent.postMessage(JSON.stringify({"type": "toDart: getText", "text": str}), "*");
+                  }
+                  if (data["type"].includes("getHeight")) {
+                    var height = document.body.scrollHeight;
+                    window.parent.postMessage(JSON.stringify({"view": "Xg3WhdU0wanymQ==", "type": "toDart: htmlHeight", "height": height}), "*");
+                  }
+                  if (data["type"].includes("setInputType")) {
+                    document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', 'text');
+                  }
+                  if (data["type"].includes("setText")) {
+                    $('#summernote-2').summernote('code', data["text"]);
+                  }
+                  if (data["type"].includes("setFullScreen")) {
+                    $("#summernote-2").summernote("fullscreen.toggle");
+                  }
+                  if (data["type"].includes("setFocus")) {
+                    $('#summernote-2').summernote('focus');
+                  }
+                  if (data["type"].includes("clear")) {
+                    $('#summernote-2').summernote('reset');
+                  }
+                  if (data["type"].includes("setHint")) {
+                    $(".note-placeholder").html(data["text"]);
+                  }
+                  if (data["type"].includes("toggleCodeview")) {
+                    $('#summernote-2').summernote('codeview.toggle');
+                  }
+                  if (data["type"].includes("disable")) {
+                    $('#summernote-2').summernote('disable');
+                  }
+                  if (data["type"].includes("enable")) {
+                    $('#summernote-2').summernote('enable');
+                  }
+                  if (data["type"].includes("undo")) {
+                    $('#summernote-2').summernote('undo');
+                  }
+                  if (data["type"].includes("redo")) {
+                    $('#summernote-2').summernote('redo');
+                  }
+                  if (data["type"].includes("insertText")) {
+                    $('#summernote-2').summernote('insertText', data["text"]);
+                  }
+                  if (data["type"].includes("insertHtml")) {
+                    $('#summernote-2').summernote('pasteHTML', data["html"]);
+                  }
+                  if (data["type"].includes("insertNetworkImage")) {
+                    $('#summernote-2').summernote('insertImage', data["url"], data["filename"]);
+                  }
+                  if (data["type"].includes("insertLink")) {
+                    $('#summernote-2').summernote('createLink', {
+                      text: data["text"],
+                      url: data["url"],
+                      isNewWindow: data["isNewWindow"]
+                    });
+                  }
+                  if (data["type"].includes("reload")) {
+                    window.location.reload();
+                  }
+                  if (data["type"].includes("addNotification")) {
+                    if (data["alertType"] === null) {
+                      $('.note-status-output').html(
+                        data["html"]
+                      );
+                    } else {
+                      $('.note-status-output').html(
+                        '<div class="' + data["alertType"] + '">' +
+                          data["html"] +
+                        '</div>'
+                      );
+                    }
+                  }
+                  if (data["type"].includes("removeNotification")) {
+                    $('.note-status-output').empty();
+                  }
+                  if (data["type"].includes("execCommand")) {
+                    if (data["argument"] === null) {
+                      document.execCommand(data["command"], false);
+                    } else {
+                      document.execCommand(data["command"], false, data["argument"]);
+                    }
+                  }
+                  if (data["type"].includes("changeListStyle")) {
+                    var $focusNode = $(window.getSelection().focusNode);
+                    var $parentList = $focusNode.closest("div.note-editable ol, div.note-editable ul");
+                    $parentList.css("list-style-type", data["changed"]);
+                  }
+                  if (data["type"].includes("changeLineHeight")) {
+                    $('#summernote-2').summernote('lineHeight', data["changed"]);
+                  }
+                  if (data["type"].includes("changeTextDirection")) {
+                    var s=document.getSelection();			
+                    if(s==''){
+                        document.execCommand("insertHTML", false, "<p dir='"+data['direction']+"'></p>");
+                    }else{
+                        document.execCommand("insertHTML", false, "<div dir='"+data['direction']+"'>"+ document.getSelection()+"</div>");
+                    }
+                  }
+                  if (data["type"].includes("changeCase")) {
+                    var selected = $('#summernote-2').summernote('createRange');
+                      if(selected.toString()){
+                          var texto;
+                          var count = 0;
+                          var value = data["case"];
+                          console.log(value);
+                          var nodes = selected.nodes();
+                          for (var i=0; i< nodes.length; ++i) {
+                              if (nodes[i].nodeName == "#text") {
+                                  count++;
+                                  texto = nodes[i].nodeValue.toLowerCase();
+                                  nodes[i].nodeValue = texto;
+                                  if (value == 'upper') {
+                                     nodes[i].nodeValue = texto.toUpperCase();
+                                  }
+                                  else if (value == 'sentence' && count==1) {
+                                     nodes[i].nodeValue = texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+                                  } else if (value == 'title') {
+                                    var sentence = texto.split(" ");
+                                    for(var j = 0; j< sentence.length; j++){
+                                       sentence[j] = sentence[j][0].toUpperCase() + sentence[j].slice(1);
+                                    }
+                                    nodes[i].nodeValue = sentence.join(" ");
+                                  }
+                              }
+                          }
+                      }
+                  }
+                  if (data["type"].includes("insertTable")) {
+                    $('#summernote-2').summernote('insertTable', data["dimensions"]);
+                  }
+                  if (data["type"].includes("getSelectedTextHtml")) {
+                    var range = window.getSelection().getRangeAt(0);
+                    var content = range.cloneContents();
+                    var span = document.createElement('span');
+                      
+                    span.appendChild(content);
+                    var htmlContent = span.innerHTML;
+                    
+                    window.parent.postMessage(JSON.stringify({"type": "toDart: getSelectedText", "text": htmlContent}), "*");
+                  } else if (data["type"].includes("getSelectedText")) {
+                    window.parent.postMessage(JSON.stringify({"type": "toDart: getSelectedText", "text": window.getSelection().toString()}), "*");
+                  }
+                  
+                }
+              }
+            }
+            
+            function onSelectionChange() {
+              let {anchorNode, anchorOffset, focusNode, focusOffset} = document.getSelection();
+              var isBold = false;
+              var isItalic = false;
+              var isUnderline = false;
+              var isStrikethrough = false;
+              var isSuperscript = false;
+              var isSubscript = false;
+              var isUL = false;
+              var isOL = false;
+              var isLeft = false;
+              var isRight = false;
+              var isCenter = false;
+              var isFull = false;
+              var parent;
+              var fontName;
+              var fontSize = 16;
+              var foreColor = "000000";
+              var backColor = "FFFF00";
+              var focusNode2 = $(window.getSelection().focusNode);
+              var parentList = focusNode2.closest("div.note-editable ol, div.note-editable ul");
+              var parentListType = parentList.css('list-style-type');
+              var lineHeight = $(focusNode.parentNode).css('line-height');
+              var direction = $(focusNode.parentNode).css('direction');
+              if (document.queryCommandState) {
+                isBold = document.queryCommandState('bold');
+                isItalic = document.queryCommandState('italic');
+                isUnderline = document.queryCommandState('underline');
+                isStrikethrough = document.queryCommandState('strikeThrough');
+                isSuperscript = document.queryCommandState('superscript');
+                isSubscript = document.queryCommandState('subscript');
+                isUL = document.queryCommandState('insertUnorderedList');
+                isOL = document.queryCommandState('insertOrderedList');
+                isLeft = document.queryCommandState('justifyLeft');
+                isRight = document.queryCommandState('justifyRight');
+                isCenter = document.queryCommandState('justifyCenter');
+                isFull = document.queryCommandState('justifyFull');
+              }
+              if (document.queryCommandValue) {
+                parent = document.queryCommandValue('formatBlock');
+                fontSize = document.queryCommandValue('fontSize');
+                foreColor = document.queryCommandValue('foreColor');
+                backColor = document.queryCommandValue('hiliteColor');
+                fontName = document.queryCommandValue('fontName');
+              }
+              var message = {
+                'view': "Xg3WhdU0wanymQ==", 
+                'type': "toDart: updateToolbar",
+                'style': parent,
+                'fontName': fontName,
+                'fontSize': fontSize,
+                'font': [isBold, isItalic, isUnderline],
+                'miscFont': [isStrikethrough, isSuperscript, isSubscript],
+                'color': [foreColor, backColor],
+                'paragraph': [isUL, isOL],
+                'listStyle': parentListType,
+                'align': [isLeft, isCenter, isRight, isFull],
+                'lineHeight': lineHeight,
+                'direction': direction,
+              };
+              window.parent.postMessage(JSON.stringify(message), "*");
+            }
+            
+            
+          </script>
+
+    <!--minor styling to improve editor design-->
+    <style>
+        body {
+            display: block;
+            background: #262645;
+            border-radius: 5px;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            margin: 0px;
+        }
+
+        .note-editor.note-airframe,
+        .note-editor.note-frame {
+            color: white;
+            border: none;
+            font-family: DM Sans;
+            font-size: 16px;
+        }
+
+        .note-frame {
+            border: none;
+            border-radius: 0px;
+        }
+    </style>
+</body>
+
+</html>

@@ -3,17 +3,17 @@
 }
 
 @font-face {
-  font-family: summernote;
+  font-family: DM Sans;
   font-style: normal;
   font-weight: 400;
   font-display: auto;
   src: url(font/summernote.eot);
-  src: url(font/summernote.eot?#iefix) format("embedded-opentype"),url(font/summernote.ttf) format("truetype");
+  src: url(font/summernote.eot?#iefix) format("embedded-opentype"),url(font/dmsans.ttf) format("truetype");
 }
 
 [class*=" note-icon"]:before,[class^=note-icon]:before {
   display: inline-block;
-  font-family: summernote;
+  font-family: DM Sans;
   font-style: normal;
   font-size: inherit;
   text-decoration: inherit;
@@ -280,18 +280,14 @@
   -ms-box-sizing: border-box;
   box-sizing: border-box;
   color: #000;
-  font-family: sans-serif;
+  font-family: DM Sans;
   border-radius: 4px;
 }
 
 .note-toolbar {
   padding: 10px 5px;
-  color: #333;
-  background-color: #f5f5f5;
-  border-bottom: 1px solid;
-  border-color: #ddd;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
+  color: #fff;
+  background-color: #262645;
 }
 
 .note-btn-group {
@@ -729,7 +725,7 @@ a.note-dropdown-item,a.note-dropdown-item:hover {
 
 .note-tooltip-content {
   max-width: 200px;
-  font-family: sans-serif;
+  font-family: DM Sans;
   padding: 3px 8px;
   color: #fff;
   text-align: center;
@@ -741,7 +737,7 @@ a.note-dropdown-item,a.note-dropdown-item:hover {
   z-index: 1060;
   display: block;
   font-size: 13px;
-  font-family: sans-serif;
+  font-family: DM Sans;
   display: none;
   background: #fff;
   border: 1px solid #ccc;
@@ -949,7 +945,7 @@ a.note-dropdown-item,a.note-dropdown-item:hover {
   padding: 10px;
   border: none;
   box-shadow: none;
-  font-family: Menlo,Monaco,monospace,sans-serif;
+  font-family: DM Sans;
   font-size: 14px;
   color: #ccc;
   background-color: #222;
